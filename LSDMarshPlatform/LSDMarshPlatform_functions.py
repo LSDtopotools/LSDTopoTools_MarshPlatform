@@ -40,6 +40,29 @@ def Distribution(Data2D, Nodata_value):
 
 
 
+#---------------------
+# This is a function that makes an outline out of a raster where each object has a single given value
+
+def Outline (Raster, Outline_value, Nodata_value):
+
+    P1 = np.where(Raster[:,1:] != Raster[:,:-1])
+    Raster[P1] = Outline_value           
+
+    P2 = np.where(Raster[1:,:] != Raster[:-1,:])
+    Raster[P2] = Outline_value
+    
+    for i in range(len(Raster)):
+        for j in range(len(Raster[0,:])):
+            if Raster[i,j] == Outline_value:
+                K = kernel (Raster, 3, i, j)
+                if np.mean(K) < 0:
+                    Raster[i,j] = 0
+    
+    return Raster
+
+
+
+
 
 
 #-----------------------------------------------------------------------------------------------------
@@ -178,7 +201,7 @@ def kernel (array, kernel_size, x_centre, y_centre):
         Lim_top = y_centre - min(np.floor(kernel_size/2), Y_to_0)
         Lim_bottom = y_centre + min(np.floor(kernel_size/2)+1, Y_to_End)
 
-        kernel = array [Lim_left:Lim_right, Lim_top:Lim_bottom]
+        kernel = array [int(Lim_left):int(Lim_right), int(Lim_top):int(Lim_bottom)]
 
     else:
         print
@@ -721,8 +744,8 @@ def Fill_high_ground (DEM, Peaks, Nodata_value,opt):
 
 #def MARSH_ID (DEM, Slope, Curvature, Metric2, Nodata_value):
 #Added this line for optimisation purposes
-def MARSH_ID (DEM, Slope, Curvature, Nodata_value, opt1, opt2, opt3):
-    DEM_work = np.copy(DEM); Slope_work = np.copy(Slope); Curvature_work = np.copy(Curvature) #; Channels_work = np.copy(Channels)
+def MARSH_ID (DEM, Slope, Nodata_value, opt1, opt2, opt3):
+    DEM_work = np.copy(DEM); Slope_work = np.copy(Slope);
 
     Platform = np.copy(DEM_work)
     Ridge = np.copy(DEM_work)

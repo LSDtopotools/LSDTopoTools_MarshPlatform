@@ -1,7 +1,13 @@
 """
 Example_Plots.py
 
-This script produces nice plots to visualise your results
+
+    This contains wrapper functions that simplify plotting raster
+    and vector data for publication-ready figures.
+    The documentation of the examples can be found here:
+    https://lsdtopotools.github.io/LSDTopoTools_ChiMudd2014/
+    Simon Mudd and Fiona Clubb, June 2017
+    Released under GPL3
 
 """
 
@@ -48,38 +54,22 @@ import matplotlib.patches as mpatches
 import timeit
 #------------------------------------------------------------------
 # Import the marsh-finding functions
-from Example_functions import ENVI_raster_binary_to_2d_array
-from Example_functions import ENVI_raster_binary_from_2d_array
-from Example_functions import kernel
-
-
-
-# This is a function that makes an outline out of a raster where each object has a single given value
-
-def Outline (Raster, Outline_value, Nodata_value):
-
-    P1 = np.where(Raster[:,1:] != Raster[:,:-1])
-    Raster[P1] = Outline_value           
-
-    P2 = np.where(Raster[1:,:] != Raster[:-1,:])
-    Raster[P2] = Outline_value
-    
-    for i in range(len(Raster)):
-        for j in range(len(Raster[0,:])):
-            if Raster[i,j] == Outline_value:
-                K = kernel (Raster, 3, i, j)
-                if np.mean(K) < 0:
-                    Raster[i,j] = 0
-    
-    return Raster
-
-
-
-
+from LSDMarshPlatform_functions import ENVI_raster_binary_to_2d_array
+from LSDMarshPlatform_functions import ENVI_raster_binary_from_2d_array
+from LSDMarshPlatform_functions import kernel
+from LSDMarshPlatform_functions import Outline
 
 
 #------------------------------------------------------------------
 #2. Set up the important variables
+
+# Name your data input directory
+Input_dir = "//csce.datastore.ed.ac.uk/csce/geos/users/s1563094/Software/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/"
+# Name your results output directory
+Output_dir = "//csce.datastore.ed.ac.uk/csce/geos/users/s1563094/Software/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/"
+# NB: When naming your work directories, make sure the syntax is compatible with the OS you are using. Above is an example in the Windows command shell
+
+
 
 #Select site names. Simply add a site in the list to analyse multiple sites simultaneously.
 Sites = ["FEL"]
@@ -88,26 +78,26 @@ Sites = ["FEL"]
 Nodata_value = -9999
 
 
-# Use this if you want to time the execution
-Start = timeit.default_timer()
-
 
 #------------------------------------------------------------------
 #3. Start Plotting
 
+# Comment this line if you don't want to know how long the script run for.
+Start = timeit.default_timer()
+
 #Plot 1: Draw the platform on a DEM, superimposed on a hillshade
 for site in Sites:
     fig=plt.figure(1, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, axisbg='white')
+    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
 
     # Name the axes
     ax1.set_xlabel('x (m)', fontsize = 12)
     ax1.set_ylabel('y (m)', fontsize = 12)
 
     # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array ("Input/%s_hs_clip.bil" % (site), site)
-    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array ("Input/%s_DEM_clip.bil" % (site), site)
-    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array ("Output/%s_Marsh.bil" % (site), site)
+    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
+    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
 
     
     # Make a mask!
@@ -121,7 +111,7 @@ for site in Sites:
     
 
 
-plt.savefig('Output/Figure_1.png')
+plt.savefig(Output_dir+'Figure_1.png')
 
 
 
@@ -129,16 +119,16 @@ plt.savefig('Output/Figure_1.png')
 #Plot 2: Draw the marsh outline on a DEM, superimposed on a hillshade
 for site in Sites:
     fig=plt.figure(2, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, axisbg='white')
+    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
 
     # Name the axes
     ax1.set_xlabel('x (m)', fontsize = 12)
     ax1.set_ylabel('y (m)', fontsize = 12)
 
     # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array ("Input/%s_hs_clip.bil" % (site), site)
-    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array ("Input/%s_DEM_clip.bil" % (site), site)
-    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array ("Output/%s_Marsh.bil" % (site), site)
+    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
+    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
 
     # Outline the marsh
     Platform[Platform > 0] = 1
@@ -155,14 +145,14 @@ for site in Sites:
     Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
     
 
-plt.savefig('Output/Figure_2.png')
+plt.savefig(Output_dir+'Figure_2.png')
 
 
 
 #Plot 3: Draw the marsh map and reference outline, superimposed on a hillshade
 for site in Sites:
     fig=plt.figure(3, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, axisbg='white')
+    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
 
 
     # Name the axes
@@ -170,10 +160,10 @@ for site in Sites:
     ax1.set_ylabel('y (m)', fontsize = 12)
 
     # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array ("Input/%s_hs_clip.bil" % (site), site)
-    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array ("Input/%s_DEM_clip.bil" % (site), site)
-    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array ("Output/%s_Marsh.bil" % (site), site)
-    Reference, post_Reference, envidata_Reference = ENVI_raster_binary_to_2d_array ("Input/%s_ref_DEM_clip.bil" % (site), site)
+    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
+    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
+    Reference, post_Reference, envidata_Reference = ENVI_raster_binary_to_2d_array (Input_dir+"%s_ref_DEM_clip.bil" % (site), site)
 
     # Outline the reference
     Reference[Reference > 0] = 1
@@ -194,7 +184,7 @@ for site in Sites:
     
     Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
 
-plt.savefig('Output/Figure_3.png')
+plt.savefig(Output_dir+'Figure_3.png')
 
 
 
@@ -202,7 +192,7 @@ plt.savefig('Output/Figure_3.png')
 #Plot 4: Draw the confusion map, superimposed on a hillshade
 for site in Sites:
     fig=plt.figure(4, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, axisbg='white')
+    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
 
 
     # Name the axes
@@ -210,8 +200,8 @@ for site in Sites:
     ax1.set_ylabel('y (m)', fontsize = 12)
 
     # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array ("Input/%s_hs_clip.bil" % (site), site)
-    Confusion, post_Confusion, envidata_Confusion = ENVI_raster_binary_to_2d_array ("Output/%s_Confusion_DEM.bil" % (site), site)
+    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+    Confusion, post_Confusion, envidata_Confusion = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Confusion_DEM.bil" % (site), site)
 
     
     # Make a mask!
@@ -223,10 +213,12 @@ for site in Sites:
     Map_DEM = ax1.imshow(Confusion_mask, interpolation='None', cmap=plt.cm.Spectral, vmin = -2, vmax = 2, alpha = 0.5)
     
 
-plt.savefig('Output/Figure_4.png')
+plt.savefig(Output_dir+'Figure_4.png')
 
 
-
+    
+# Comment these 2 lines if you don't want to know how long the script run for.    
 Stop = timeit.default_timer()
 print 'Runtime = ', Stop - Start , 's'
+
 
