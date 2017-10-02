@@ -1,0 +1,26 @@
+# Parameters for extracting simple surface metrics
+# Comments are preceeded by the hash symbol
+# Documentation can be found here: 
+# https://simon-m-mudd.github.io/QGIS_book/#_an_example_using_data_from_lsdtopotools
+
+# These are parameters for the file i/o
+# IMPORTANT: You MUST make the write directory: the code will not work if it doesn't exist. 
+read path: /LSDTopoTools/Git_projects/LSDTopoTools_MarshPlatform/Example_data
+write path: /LSDTopoTools/Git_projects/LSDTopoTools_MarshPlatform/Example_data
+read fname: FEL_DEM_clip
+write fname: FEL_DEM_clip
+channel heads fname: NULL
+
+# You need the hillshade for plotting
+write_hillshade: true
+
+# You need the slope raster as well
+surface_fitting_radius: 1
+print_slope: true
+
+# You can uncomment these two lines if you want either the curvature or the wiener filtered topography
+print_curvature: true
+print_wiener_filtered_raster: true
+
+
+
