@@ -67,9 +67,9 @@ def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/
 
         # NB: When loading input data, please make sure the naming convention shown here is respected.
         print(" Loading DEM")
-        DEM, post_DEM, envidata_DEM =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
+        DEM, post_DEM, envidata_DEM =  ENVI_raster_binary_to_2d_array (Input_dir+"%s.bil" % (site), site)
         print " Loading Slopes"
-        Slope, post_Slope, envidata_Slope =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_slope_clip.bil" % (site), site)
+        Slope, post_Slope, envidata_Slope =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_SLOPE.bil" % (site), site)
 
 
         # Here begins the detection process
@@ -94,10 +94,10 @@ def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/
             print " Loading detected Marsh"
             Platform_work, post_Platform, envidata_Platform =  ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
             print "Loading reference marsh"
-            Reference, post_Reference, envidata_Reference =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_ref_DEM_clip.bil" % (site), site)
+            Reference, post_Reference, envidata_Reference =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_ref.bil" % (site), site)
             print "Evaluating the performance of the detection"
             Confusion_matrix, Performance, Metrix = Confusion (Platform_work, Reference, Nodata_value)
-            new_geotransform, new_projection, file_out = ENVI_raster_binary_from_2d_array (envidata_Platform, Output_dir+"%s_Confusion_DEM.bil" % (site),                                                                                post_Platform, Confusion_matrix)
+            new_geotransform, new_projection, file_out = ENVI_raster_binary_from_2d_array (envidata_Platform, Output_dir+"%s_Confusion.bil" % (site),                                                                                post_Platform, Confusion_matrix)
             cPickle.dump(Performance,open(Output_dir+"%s_Performance.pkl" % (site), "wb"))
             cPickle.dump(Metrix,open(Output_dir+"%s_Metrix.pkl" % (site), "wb"))
 

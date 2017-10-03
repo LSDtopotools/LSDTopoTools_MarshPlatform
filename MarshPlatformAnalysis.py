@@ -83,12 +83,12 @@ def main(argv):
 
     # Run the analysis if you want it
     if args.MarshID:
-        MP.MarshID(Input_dir = this_dir, Output_dir = this_dir)
+        MP.MarshID(Input_dir = this_dir, Output_dir = this_dir,Sites=sites)
         
     # make the plots depending on your choices
     if args.MarshID_plots:
-        MP.Plot_platform_on_hillshade(Input_dir = this_dir, Output_dir = this_dir)
-        MP.Plot_marsh_outline_on_hillshade(Input_dir = this_dir, Output_dir = this_dir)
+        MP.Plot_platform_on_hillshade(Input_dir = this_dir, Output_dir = this_dir,Sites=sites)
+        MP.Plot_marsh_outline_on_hillshade(Input_dir = this_dir, Output_dir = this_dir,Sites=sites)
 
         
 #=============================================================================
