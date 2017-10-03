@@ -58,6 +58,7 @@ from LSDMarshPlatform_functions import ENVI_raster_binary_to_2d_array
 from LSDMarshPlatform_functions import ENVI_raster_binary_from_2d_array
 from LSDMarshPlatform_functions import kernel
 from LSDMarshPlatform_functions import Outline
+from LSDMarshPlatform_functions import Distribution
 
 
 #------------------------------------------------------------------
@@ -117,7 +118,75 @@ def Plot_platform_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPla
         plt.savefig(Output_dir+'Figure_1.png')
 
 
+        
+        
+        
+def Plot_Elevation_PDF(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
+            Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
+            Sites = ["FEL"]):
+    """
+    This plots the extracted marsh platform on a hillshade
+    
+    Args:
+        Input_dir (str): Name your data input directory
+        Output_dir (str): Name your results output directory
+        Sites (str list): A list of strings. The file names are modified based on these sites
+        
+    Author: GCHG
+    """
+    #Plot 1: Draw the platform on a DEM, superimposed on a hillshade
+    for site in Sites:
+        fig=plt.figure(1, facecolor='White',figsize=[10,10])
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
 
+        # Name the axes
+        ax1.set_xlabel('Elevation (m)', fontsize = 12)
+        ax1.set_ylabel('Probability Distribution (m)', fontsize = 12)
+
+        # Load the relevant data
+        DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s.bil" % (site), site)
+        Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
+        Platform [Platform>0] = DEM [Platform>0]
+
+        bins_z, hist_z = Distribution (DEM, Nodata_value)
+        bins_M, hist_M = Distribution (Platform, Nodata_value)
+
+        Elevation_range_z = np.arange(min(bins_z[bins_z!=Nodata_value]), max(bins_z), 0.1)    
+        Elevation_range_M = np.arange(min(bins_z[bins_z!=Nodata_value]), max(bins_M), 0.1)
+        Ratio = (max(hist_z[hist_z < 0.2])/max(hist_M[hist_M < 0.2]))
+        hist_z_copy = hist_z / Ratio
+        hist_M[0] = 0
+
+
+        ax1.fill_between( bins_z, -5, hist_z_copy, color=plt.cm.gray(0), alpha = 0.5, linewidth = 0.0)
+        ax1.plot( bins_M, hist_M, '-r', linewidth = 2.0) 
+
+    
+        # Set the ticks
+        A = 0.01
+        #for x in range(len(hist_M)-1):
+            #if hist_M[x]==0 and hist_M[x+1]>0:
+                #A = bins_M[x]
+                #break
+        #xmin = max(-5,A)
+        ymax = max(hist_M[hist_M<0.2])
+
+        #ax1.set_xlim (xmin = xmin)
+        ax1.set_ylim (ymin = 0, ymax = ymax*1.05)
+
+        #majorLocator1 = MultipleLocator(np.floor(100*ymax)/200)
+        #ax1.yaxis.set_major_locator(majorLocator1)
+        #majorLocator2 = MultipleLocator(1)
+        #ax1.xaxis.set_major_locator(majorLocator2)
+
+        
+        plt.savefig(Output_dir+'Figure_PDF.png')
+        
+
+        
+        
+        
+        
 def Plot_marsh_outline_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
             Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
             Sites = ["FEL"]):
