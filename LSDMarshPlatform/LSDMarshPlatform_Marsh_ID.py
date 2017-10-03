@@ -35,7 +35,7 @@ from LSDMarshPlatform_functions import Confusion
 
 def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
             Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
-            Sites = ["FEL"], opt1 = -2.0, opt2 = 0.85, opt3 = 8.0, compare_with_digitised_marsh = False): 
+            Sites = ["FEL_DEM_clip"], opt1 = -2.0, opt2 = 0.85, opt3 = 8.0, compare_with_digitised_marsh = False): 
     """
     This function wraps all the marsh ID scripts in one location
     
@@ -69,7 +69,7 @@ def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/
         print(" Loading DEM")
         DEM, post_DEM, envidata_DEM =  ENVI_raster_binary_to_2d_array (Input_dir+"%s.bil" % (site), site)
         print " Loading Slopes"
-        Slope, post_Slope, envidata_Slope =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_SLOPE.bil" % (site), site)
+        Slope, post_Slope, envidata_Slope =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_slope.bil" % (site), site)
 
 
         # Here begins the detection process
