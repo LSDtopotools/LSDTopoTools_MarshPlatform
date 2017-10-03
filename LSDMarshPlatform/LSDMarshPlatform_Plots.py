@@ -77,148 +77,182 @@ Sites = ["FEL"]
 # Set the value for empty DEM cells
 Nodata_value = -9999
 
-
-
-#------------------------------------------------------------------
-#3. Start Plotting
-
-# Comment this line if you don't want to know how long the script run for.
-Start = timeit.default_timer()
-
-#Plot 1: Draw the platform on a DEM, superimposed on a hillshade
-for site in Sites:
-    fig=plt.figure(1, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
-
-    # Name the axes
-    ax1.set_xlabel('x (m)', fontsize = 12)
-    ax1.set_ylabel('y (m)', fontsize = 12)
-
-    # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
-    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
-    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
-
+def Plot_platform_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
+            Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
+            Sites = ["FEL"]):
+    """
+    This plots the extracted marsh platform on a hillshade
     
-    # Make a mask!
-    Platform_mask = np.ma.masked_where(Platform <=0, Platform)
-    Platform_mask[Platform_mask>0] = DEM[Platform_mask>0]
+    Args:
+        Input_dir (str): Name your data input directory
+        Output_dir (str): Name your results output directory
+        Sites (str list): A list of strings. The file names are modified based on these sites
+        
+    Author: GCHG
+    """
+    #Plot 1: Draw the platform on a DEM, superimposed on a hillshade
+    for site in Sites:
+        fig=plt.figure(1, facecolor='White',figsize=[10,10])
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+
+        # Name the axes
+        ax1.set_xlabel('x (m)', fontsize = 12)
+        ax1.set_ylabel('y (m)', fontsize = 12)
+
+        # Load the relevant data
+        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+        DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
+        Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
+
+
+        # Make a mask!
+        Platform_mask = np.ma.masked_where(Platform <=0, Platform)
+        Platform_mask[Platform_mask>0] = DEM[Platform_mask>0]
+
+        # Make a map!
+        Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
+        Map_DEM = ax1.imshow(DEM, interpolation='None', cmap=plt.cm.gist_gray, vmin = np.amin(DEM[DEM!=Nodata_value]), vmax = np.amax(DEM), alpha = 0.5)
+        Map_Marsh = ax1.imshow(Platform_mask, interpolation='None', cmap=plt.cm.gist_earth, vmin=np.amin(DEM[DEM!=Nodata_value]), vmax=np.amax(DEM), alpha = 0.5)
+
+        plt.savefig(Output_dir+'Figure_1.png')
+
+
+
+def Plot_marsh_outline_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
+            Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
+            Sites = ["FEL"]):
+    """
+    This draws the marsh outline on a DEM, superimposed on a hillshade.
     
-    # Make a map!
-    Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
-    Map_DEM = ax1.imshow(DEM, interpolation='None', cmap=plt.cm.gist_gray, vmin = np.amin(DEM[DEM!=Nodata_value]), vmax = np.amax(DEM), alpha = 0.5)
-    Map_Marsh = ax1.imshow(Platform_mask, interpolation='None', cmap=plt.cm.gist_earth, vmin=np.amin(DEM[DEM!=Nodata_value]), vmax=np.amax(DEM), alpha = 0.5)
+    Args:
+        Input_dir (str): Name your data input directory.
+        Output_dir (str): Name your results output directory.
+        Sites (str list): A list of strings. The file names are modified based on these sites.
+        
+    Author: GCHG
+    """
     
+    for site in Sites:
+        fig=plt.figure(2, facecolor='White',figsize=[10,10])
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+
+        # Name the axes
+        ax1.set_xlabel('x (m)', fontsize = 12)
+        ax1.set_ylabel('y (m)', fontsize = 12)
+
+        # Load the relevant data
+        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+        DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
+        Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
+
+        # Outline the marsh
+        Platform[Platform > 0] = 1
+        Marsh_outline = Outline (Platform, 2, Nodata_value)
 
 
-plt.savefig(Output_dir+'Figure_1.png')
+        # Make a mask!
+        Outline_mask = np.ma.masked_where(Marsh_outline <=1, Marsh_outline)
+
+        # Make a map!
+        Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
+        Map_DEM = ax1.imshow(DEM, interpolation='None', cmap=plt.cm.gist_gray, vmin = np.amin(DEM[DEM!=Nodata_value]), vmax = np.amax(DEM), alpha = 0.5)
+
+        Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
 
 
+    plt.savefig(Output_dir+'Figure_2.png')
 
 
-#Plot 2: Draw the marsh outline on a DEM, superimposed on a hillshade
-for site in Sites:
-    fig=plt.figure(2, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
-
-    # Name the axes
-    ax1.set_xlabel('x (m)', fontsize = 12)
-    ax1.set_ylabel('y (m)', fontsize = 12)
-
-    # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
-    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
-    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
-
-    # Outline the marsh
-    Platform[Platform > 0] = 1
-    Marsh_outline = Outline (Platform, 2, Nodata_value)
-
+def Plot_marsh_reference_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
+            Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
+            Sites = ["FEL"]):
+    """
+    This draws the marsh reference on a hillshade
     
-    # Make a mask!
-    Outline_mask = np.ma.masked_where(Marsh_outline <=1, Marsh_outline)
+    Args:
+        Input_dir (str): Name your data input directory.
+        Output_dir (str): Name your results output directory.
+        Sites (str list): A list of strings. The file names are modified based on these sites.
+        
+    Author: GCHG
+    """
+    #Plot 3: Draw the marsh map and reference outline, superimposed on a hillshade
+    for site in Sites:
+        fig=plt.figure(3, facecolor='White',figsize=[10,10])
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
 
-    # Make a map!
-    Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
-    Map_DEM = ax1.imshow(DEM, interpolation='None', cmap=plt.cm.gist_gray, vmin = np.amin(DEM[DEM!=Nodata_value]), vmax = np.amax(DEM), alpha = 0.5)
+
+        # Name the axes
+        ax1.set_xlabel('x (m)', fontsize = 12)
+        ax1.set_ylabel('y (m)', fontsize = 12)
+
+        # Load the relevant data
+        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+        DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
+        Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
+        Reference, post_Reference, envidata_Reference = ENVI_raster_binary_to_2d_array (Input_dir+"%s_ref_DEM_clip.bil" % (site), site)
+
+        # Outline the reference
+        Reference[Reference > 0] = 1
+        Ref_outline = Outline (Reference, 2, Nodata_value)
+
+
+        # Make a mask!
+        Outline_mask = np.ma.masked_where(Ref_outline <=1, Ref_outline)
+
+
+        # Make a map!
+        Platform_mask = np.ma.masked_where(Platform <=0, Platform)
+        Platform_mask[Platform_mask>0] = DEM[Platform_mask>0]
+
+        Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
+        Map_DEM = ax1.imshow(DEM, interpolation='None', cmap=plt.cm.gist_gray, vmin = np.amin(DEM[DEM!=Nodata_value]), vmax = np.amax(DEM), alpha = 0.5)
+        Map_Marsh = ax1.imshow(Platform_mask, interpolation='None', cmap=plt.cm.gist_earth, vmin=np.amin(DEM[DEM!=Nodata_value]), vmax=np.amax(DEM), alpha = 0.5)
+
+        Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
+
+    plt.savefig(Output_dir+'Figure_3.png')
+
+
+
+def Plot_confusion_map_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
+            Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
+            Sites = ["FEL"]):
+    """
+    This draws the marsh reference on a hillshade
     
-    Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
-    
-
-plt.savefig(Output_dir+'Figure_2.png')
-
-
-
-#Plot 3: Draw the marsh map and reference outline, superimposed on a hillshade
-for site in Sites:
-    fig=plt.figure(3, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
-
-
-    # Name the axes
-    ax1.set_xlabel('x (m)', fontsize = 12)
-    ax1.set_ylabel('y (m)', fontsize = 12)
-
-    # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
-    DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
-    Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
-    Reference, post_Reference, envidata_Reference = ENVI_raster_binary_to_2d_array (Input_dir+"%s_ref_DEM_clip.bil" % (site), site)
-
-    # Outline the reference
-    Reference[Reference > 0] = 1
-    Ref_outline = Outline (Reference, 2, Nodata_value)
-
-    
-    # Make a mask!
-    Outline_mask = np.ma.masked_where(Ref_outline <=1, Ref_outline)
-    
-    
-    # Make a map!
-    Platform_mask = np.ma.masked_where(Platform <=0, Platform)
-    Platform_mask[Platform_mask>0] = DEM[Platform_mask>0]
-
-    Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
-    Map_DEM = ax1.imshow(DEM, interpolation='None', cmap=plt.cm.gist_gray, vmin = np.amin(DEM[DEM!=Nodata_value]), vmax = np.amax(DEM), alpha = 0.5)
-    Map_Marsh = ax1.imshow(Platform_mask, interpolation='None', cmap=plt.cm.gist_earth, vmin=np.amin(DEM[DEM!=Nodata_value]), vmax=np.amax(DEM), alpha = 0.5)
-    
-    Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
-
-plt.savefig(Output_dir+'Figure_3.png')
+    Args:
+        Input_dir (str): Name your data input directory.
+        Output_dir (str): Name your results output directory.
+        Sites (str list): A list of strings. The file names are modified based on these sites.
+        
+    Author: GCHG
+    """
+    #Plot 4: Draw the confusion map, superimposed on a hillshade
+    for site in Sites:
+        fig=plt.figure(4, facecolor='White',figsize=[10,10])
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
 
 
+        # Name the axes
+        ax1.set_xlabel('x (m)', fontsize = 12)
+        ax1.set_ylabel('y (m)', fontsize = 12)
+
+        # Load the relevant data
+        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
+        Confusion, post_Confusion, envidata_Confusion = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Confusion_DEM.bil" % (site), site)
 
 
-#Plot 4: Draw the confusion map, superimposed on a hillshade
-for site in Sites:
-    fig=plt.figure(4, facecolor='White',figsize=[10,10])
-    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+        # Make a mask!
+        Confusion_mask = np.ma.masked_where(Confusion == Nodata_value, Confusion)
 
 
-    # Name the axes
-    ax1.set_xlabel('x (m)', fontsize = 12)
-    ax1.set_ylabel('y (m)', fontsize = 12)
-
-    # Load the relevant data
-    HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs_clip.bil" % (site), site)
-    Confusion, post_Confusion, envidata_Confusion = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Confusion_DEM.bil" % (site), site)
-
-    
-    # Make a mask!
-    Confusion_mask = np.ma.masked_where(Confusion == Nodata_value, Confusion)
-    
-    
-    # Make a map!
-    Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
-    Map_DEM = ax1.imshow(Confusion_mask, interpolation='None', cmap=plt.cm.Spectral, vmin = -2, vmax = 2, alpha = 0.5)
-    
-
-plt.savefig(Output_dir+'Figure_4.png')
+        # Make a map!
+        Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
+        Map_DEM = ax1.imshow(Confusion_mask, interpolation='None', cmap=plt.cm.Spectral, vmin = -2, vmax = 2, alpha = 0.5)
 
 
-    
-# Comment these 2 lines if you don't want to know how long the script run for.    
-Stop = timeit.default_timer()
-print 'Runtime = ', Stop - Start , 's'
+    plt.savefig(Output_dir+'Figure_4.png')
+
 
 
