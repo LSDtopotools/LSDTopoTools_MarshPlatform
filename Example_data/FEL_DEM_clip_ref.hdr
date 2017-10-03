@@ -1,0 +1,16 @@
+ENVI
+description = {
+Input/FEL_DEM_clip_ref.bil}
+samples = 224
+lines   = 246
+bands   = 1
+header offset = 0
+file type = ENVI Standard
+data type = 5
+interleave = bsq
+byte order = 0
+map info = {Transverse Mercator, 1, 1, 621870.172287126, 233780.298867744, 1.00060199449633, 1.00076202127341}
+projection info = {3, 6377563.396, 6356256.909237285, 49, -2, 400000, -100000, 0.9996012717, Transverse Mercator}
+coordinate system string = {PROJCS["OSGB_1936_British_National_Grid",GEOGCS["GCS_OSGB 1936",DATUM["D_OSGB_1936",SPHEROID["Airy_1830",6377563.396,299.3249646]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",49],PARAMETER["central_meridian",-2],PARAMETER["scale_factor",0.9996012717],PARAMETER["false_easting",400000],PARAMETER["false_northing",-100000],UNIT["Meter",1]]}
+band names = {
+Band 1}
