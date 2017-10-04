@@ -12,7 +12,7 @@ write fname: FEL_DEM_clip
 channel heads fname: NULL
 
 # You need the hillshade for plotting
-write hillshade: true
+write_hillshade: true
 
 # You need the slope raster as well
 surface_fitting_radius: 1
