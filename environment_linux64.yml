@@ -1,4 +1,4 @@
-name: LSDTT_linux64
+name: LSDTT
 channels:
 - conda-forge
 - defaults
