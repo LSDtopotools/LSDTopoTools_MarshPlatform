@@ -1,7 +1,7 @@
 """
 LSDMarshPlatform_Marsh_ID.py
 
-This is your driver file to run the marsh platform extraction. 
+This is your driver file to run the marsh platform extraction.
 
 Please read the README and the instructions in this script before you run it.
 
@@ -20,6 +20,7 @@ matplotlib.use('Agg')
 import numpy as np
 import cPickle
 import timeit
+import os
 
 # A very useful package
 from LSDMarshPlatform_functions import ENVI_raster_binary_to_2d_array
@@ -33,12 +34,12 @@ from LSDMarshPlatform_functions import Confusion
 # "//csce.datastore.ed.ac.uk/csce/geos/users/s1563094/Software/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/"
 
 
-def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
+def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
             Output_dir = "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/",
-            Sites = ["FEL_DEM_clip"], opt1 = -2.0, opt2 = 0.85, opt3 = 8.0, compare_with_digitised_marsh = False): 
+            Sites = ["FEL_DEM_clip"], opt1 = -2.0, opt2 = 0.85, opt3 = 8.0, compare_with_digitised_marsh = False):
     """
     This function wraps all the marsh ID scripts in one location
-    
+
     Args:
         Input_dir (str): Name your data input directory
         Output_dir (str): Name your results output directory
@@ -47,14 +48,14 @@ def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/
         opt2 (flt): 2nd optimisation
         opt3 (flt): 3rd optimisation
         compare_with_digitised_marsh (bool): If true, this will compare the data with a digitised marsh platform
-        
-    Author: 
+
+    Author:
         GCHG, Modified by SMM 02/10/2017
     """
     #------------------------------------------------------------------
     print("Welcome to the marsh ID program!")
     print("I am opening the file: "+Input_dir)
-    
+
     # Set the value for empty DEM cells
     Nodata_value = -9999
 
@@ -69,7 +70,11 @@ def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/
         print(" Loading DEM")
         DEM, post_DEM, envidata_DEM =  ENVI_raster_binary_to_2d_array (Input_dir+"%s.bil" % (site), site)
         print " Loading Slopes"
-        Slope, post_Slope, envidata_Slope =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_slope.bil" % (site), site)
+        # check to get the correct slope raster
+        slope_fname = site+"_slope.bil"
+        if not os.path.isfile(Input_dir+slope_fname):
+            slope_fname = site+"_SLOPE.bil"
+        Slope, post_Slope, envidata_Slope =  ENVI_raster_binary_to_2d_array (Input_dir+slope_fname, site)
 
 
         # Here begins the detection process
@@ -104,9 +109,6 @@ def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/
 
 
 
-    # Comment these 2 lines if you don't want to know how long the script run for.    
+    # Comment these 2 lines if you don't want to know how long the script run for.
     Stop = timeit.default_timer()
     print 'Runtime = ', Stop - Start , 's'
-
-
-

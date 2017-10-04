@@ -22,7 +22,7 @@ def print_welcome():
     print("\n\n=======================================================================")
     print("Hello! I'm going to run a marsh platform analysis.")
     print("You will need to tell me which directory to look in.")
-    print("Use the -wd flag to define the working directory.")
+    print("Use the -dir flag to define the working directory.")
     print("If you don't do this I will assume the data is in the same directory as this script.")
     print("For help type:")
     print("   python MarshPlatformAnalysis.py -h\n")
@@ -50,12 +50,12 @@ def main(argv):
     import argparse
     parser = argparse.ArgumentParser()
     # The location of the data files
-    parser.add_argument("-dir", "--base_directory", type=str, help="The base directory with the m/n analysis. If this isn't defined I'll assume it's the same as the current directory.")
+    parser.add_argument("-dir", "--base_directory", type=str, help="The base directory with the DEMs for the marsh analysis. If this isn't defined I'll assume it's the same as the current directory.")
     parser.add_argument("-sites", "--sites",type=str,default = "", help = "This is a comma delimited string that gets the list of sites you want for analysis and plotting. This is a prefix that preceeds all the other DEM extensions. Default = no sites")
 
     # What sort of analyses you want
     parser.add_argument("-MID", "--MarshID", type=bool, default=False, help="If this is true, this will run the marsh ID algorithm")
-    
+
     # What sort of plots you want
     parser.add_argument("-MIDP", "--MarshID_plots", type=bool, default=False, help="If this is true I'll plot all the platform plots.")
 
@@ -66,13 +66,13 @@ def main(argv):
         print("WARNING! You haven't supplied your site names. Please specify this with the flag '-sites'")
         sys.exit()
     else:
-        print("The sites you want to analyse are: ")       
+        print("The sites you want to analyse are: ")
         sites = [str(item) for item in args.sites.split(',')]
         print(sites)
 
     # get the base directory
     if args.base_directory:
-        
+
         this_dir = args.base_directory
         print("You gave me the base directory:")
         print(this_dir)
@@ -84,15 +84,14 @@ def main(argv):
     # Run the analysis if you want it
     if args.MarshID:
         MP.MarshID(Input_dir = this_dir, Output_dir = this_dir,Sites=sites)
-        
+
     # make the plots depending on your choices
     if args.MarshID_plots:
         MP.Plot_platform_on_hillshade(Input_dir = this_dir, Output_dir = this_dir,Sites=sites)
         MP.Plot_marsh_outline_on_hillshade(Input_dir = this_dir, Output_dir = this_dir,Sites=sites)
         MP.Plot_Elevation_PDF(Input_dir = this_dir, Output_dir = this_dir,Sites=sites)
 
-        
+
 #=============================================================================
 if __name__ == "__main__":
-    main(sys.argv[1:])        
-        
+    main(sys.argv[1:])
