@@ -10,6 +10,7 @@ write path: /home/fionaclubb/GitHub/LSDTopoTools_MarshPlatform/Example_data
 read fname: FEL_DEM_clip
 write fname: FEL_DEM_clip
 channel heads fname: NULL
+remove_seas: false
 
 # You need the hillshade for plotting
 write_hillshade: true
