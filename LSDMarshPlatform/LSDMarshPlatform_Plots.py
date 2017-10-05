@@ -111,11 +111,11 @@ def Plot_platform_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPla
         Platform_mask[Platform_mask>0] = DEM[Platform_mask>0]
 
         # Make a map!
-        Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
+        #Map_HS = ax1.imshow(HS, interpolation='None', cmap=plt.cm.gist_gray, vmin = 100, vmax = 200)
         Map_DEM = ax1.imshow(DEM, interpolation='None', cmap=plt.cm.gist_gray, vmin = np.amin(DEM[DEM!=Nodata_value]), vmax = np.amax(DEM), alpha = 0.5)
-        Map_Marsh = ax1.imshow(Platform_mask, interpolation='None', cmap=plt.cm.gist_earth, vmin=np.amin(DEM[DEM!=Nodata_value]), vmax=np.amax(DEM), alpha = 0.5)
+        #Map_Marsh = ax1.imshow(Platform_mask, interpolation='None', cmap=plt.cm.gist_earth, vmin=np.amin(DEM[DEM!=Nodata_value]), vmax=np.amax(DEM), alpha = 0.5)
 
-        plt.savefig(Output_dir+'Figure_1.png')
+        plt.savefig(Output_dir+'Platform_DEM_%s.png' % (site))
 
 
         
@@ -180,7 +180,7 @@ def Plot_Elevation_PDF(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Ex
         #ax1.xaxis.set_major_locator(majorLocator2)
 
         
-        plt.savefig(Output_dir+'Figure_PDF.png')
+        plt.savefig(Output_dir+'Elevation_PDF_%s.png' % (site))
         
 
         
@@ -229,7 +229,7 @@ def Plot_marsh_outline_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_Mar
         Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
 
 
-    plt.savefig(Output_dir+'Figure_2.png')
+    plt.savefig(Output_dir+'Platform_outline_%s.png' % (site))
 
 
 def Plot_marsh_reference_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/", 
@@ -280,7 +280,7 @@ def Plot_marsh_reference_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_M
 
         Map_Marsh = ax1.imshow(Outline_mask, interpolation='None', cmap=plt.cm.Reds, vmin = 0, vmax = 2, alpha = 1)
 
-    plt.savefig(Output_dir+'Figure_3.png')
+    plt.savefig(Output_dir+'Reference_map_%s.png' % (site))
 
 
 
@@ -321,7 +321,7 @@ def Plot_confusion_map_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_Mar
         Map_DEM = ax1.imshow(Confusion_mask, interpolation='None', cmap=plt.cm.Spectral, vmin = -2, vmax = 2, alpha = 0.5)
 
 
-    plt.savefig(Output_dir+'Figure_4.png')
+    plt.savefig(Output_dir+'Confusion_%s.png' % (site))
 
 
 
