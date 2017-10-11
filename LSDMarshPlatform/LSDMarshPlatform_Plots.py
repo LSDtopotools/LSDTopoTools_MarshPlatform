@@ -4,9 +4,8 @@ Example_Plots.py
 
     This contains wrapper functions that simplify plotting raster
     and vector data for publication-ready figures.
-    The documentation of the examples can be found here:
-    https://lsdtopotools.github.io/LSDTopoTools_ChiMudd2014/
-    Simon Mudd and Fiona Clubb, June 2017
+
+    Guillaume CH Goodwin, Simon Mudd and Fiona Clubb, June 2017
     Released under GPL3
 
 """
