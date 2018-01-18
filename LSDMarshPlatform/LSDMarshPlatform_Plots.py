@@ -94,7 +94,7 @@ def Plot_platform_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPla
     #Plot 1: Draw the platform on a DEM, superimposed on a hillshade
     for site in Sites:
         fig=plt.figure(1, facecolor='White',figsize=[10,10])
-        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1)
 
         # Name the axes
         ax1.set_xlabel('x (m)', fontsize = 12)
@@ -137,7 +137,7 @@ def Plot_Elevation_PDF(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Ex
     #Plot 1: Draw the platform on a DEM, superimposed on a hillshade
     for site in Sites:
         fig=plt.figure(1, facecolor='White',figsize=[10,10])
-        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1)
 
         # Name the axes
         ax1.set_xlabel('Elevation (m)', fontsize = 12)
@@ -203,14 +203,14 @@ def Plot_marsh_outline_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_Mar
     
     for site in Sites:
         fig=plt.figure(2, facecolor='White',figsize=[10,10])
-        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1)
 
         # Name the axes
         ax1.set_xlabel('x (m)', fontsize = 12)
         ax1.set_ylabel('y (m)', fontsize = 12)
 
         # Load the relevant data
-        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs.bil" % (site), site)
+        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_hs.bil" % (site), site)
         DEM, post_DEM, envidata_DEM = ENVI_raster_binary_to_2d_array (Input_dir+"%s.bil" % (site), site)
         Platform, post_Platform, envidata_Platform = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Marsh.bil" % (site), site)
 
@@ -248,7 +248,7 @@ def Plot_marsh_reference_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_M
     #Plot 3: Draw the marsh map and reference outline, superimposed on a hillshade
     for site in Sites:
         fig=plt.figure(3, facecolor='White',figsize=[10,10])
-        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1)
 
 
         # Name the axes
@@ -300,7 +300,7 @@ def Plot_confusion_map_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_Mar
     #Plot 4: Draw the confusion map, superimposed on a hillshade
     for site in Sites:
         fig=plt.figure(4, facecolor='White',figsize=[10,10])
-        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1, facecolor='white')
+        ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1)
 
 
         # Name the axes
@@ -308,7 +308,7 @@ def Plot_confusion_map_on_hillshade(Input_dir =  "/LSDTopoTools/LSDTopoTools_Mar
         ax1.set_ylabel('y (m)', fontsize = 12)
 
         # Load the relevant data
-        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_hs.bil" % (site), site)
+        HS, post_HS, envidata_HS = ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_hs.bil" % (site), site)
         Confusion, post_Confusion, envidata_Confusion = ENVI_raster_binary_to_2d_array (Output_dir+"%s_Confusion.bil" % (site), site)
 
 
