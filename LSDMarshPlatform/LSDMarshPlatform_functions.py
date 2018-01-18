@@ -229,25 +229,74 @@ def define_search_space (DEM, Slope, Nodata_value, opt):
 
     # We calculate the relative relief of the DEM to have values of elevation between 0 and 1
     Relief = DEM-np.amin(DEM[DEM > Nodata_value])
+    print 'DEM bounds', np.amin(DEM)
+    print 'relief ini', np.amin(Relief[Relief!=Nodata_value]), np.amin(DEM[DEM > Nodata_value])
+    
     Rel_relief = Relief/np.amax(Relief)
-    Rel_relief[DEM == Nodata_value] = Nodata_value
+    Rel_relief[DEM <= Nodata_value] = Nodata_value
 
     # We then do the same thing for slope
     Rel_slope = Slope/np.amax(Slope)
     Rel_slope[Slope == Nodata_value] = Nodata_value
+    Rel_slope[Rel_relief == Nodata_value] = Nodata_value
 
+    print 'relief', np.amin(Rel_relief[Rel_relief!=Nodata_value]), np.amax(Rel_relief)
+    print 'slopes', np.amin(Rel_slope[Rel_slope!=Nodata_value]), np.amax(Rel_slope)
+ 
+        
+        
     # We then multiply these new relative relief and slope arrays and biologically name them "Crossover"
     Crossover = Rel_relief * Rel_slope
-    Crossover[DEM == Nodata_value] = Nodata_value
+    Crossover[DEM <= Nodata_value] = Nodata_value
+    
+
 
     # We make a curve of the frequency of values in this Crossover
     # That curve should look like a decreasing exponential function
     data = Crossover.ravel(); data = data[data>0]
+
     step = (max(data) - min(data)) / 100
+        
     value = np.arange(min(data), max(data), step)
     hist, bins = np.histogram (data, value, density=True)
+    #hist, bins = Distribution(Crossover, Nodata_value)
     hist=hist/sum(hist); bins=bins[:-1]
 
+ 
+
+    
+
+    #Let's make a figure to check
+    fig=plt.figure(1, facecolor='White',figsize=[10,10])
+    ax1 = plt.subplot2grid((1,1),(0,0),colspan=1, rowspan=1)
+
+    # Name the axes
+    ax1.set_xlabel('Elevation (m)', fontsize = 12)
+    ax1.set_ylabel('Probability Distribution (m)', fontsize = 12)
+
+    ax1.plot( bins, hist, '-r', linewidth = 2.0) 
+
+
+    # Set the ticks
+    A = 0.01
+    #for x in range(len(hist_M)-1):
+        #if hist_M[x]==0 and hist_M[x+1]>0:
+            #A = bins_M[x]
+            #break
+    #xmin = max(-5,A)
+    ymax = max(hist)
+
+    #ax1.set_xlim (xmin = xmin)
+    ax1.set_ylim (ymin = 0, ymax = ymax*1.05)
+
+
+
+
+    plt.savefig('Elevation_PDF.png' )
+        
+
+
+    
     # We now find the slope of that curve
     hist_der = np.zeros(len(hist), dtype = np.float)
     for j in range(1, len(hist), 1):
@@ -613,7 +662,7 @@ def Fill_marsh (DEM, Peaks, Nodata_value, opt):
             # 1: free space
             Condition_1 = np.where (np.logical_and(Kernel_ridges == 0, Kernel_marsh == 0)); Conditions[Condition_1] = 1
             # 2: not topped
-            Condition_2 = np.where (np.logical_and(Kernel_DEM_copy > np.amax(Big_Kernel_DEM_copy)-0.2, Conditions == 1)); Conditions[Condition_2] = 2
+            Condition_2 = np.where (np.logical_and(Kernel_DEM_copy > np.amax(Big_Kernel_DEM_copy)-0.20, Conditions == 1)); Conditions[Condition_2] = 2
             
             
             #This is a distance thing to make sure you don't cross the ridges agin
@@ -636,8 +685,9 @@ def Fill_marsh (DEM, Peaks, Nodata_value, opt):
                     Distance_to_parents.append(Distance)
 
                 if len(Distance_to_ridges)>0:
-                    if min(Distance_to_ridges) > min(Distance_to_parents):
-                        Marsh[x+X-1, y+Y-1] = Counter
+                    if len(Distance_to_parents)>0:
+                        if min(Distance_to_ridges) > min(Distance_to_parents):
+                            Marsh[x+X-1, y+Y-1] = Counter
                 else:
                     Marsh[x+X-1, y+Y-1] = Counter
                     DEM_copy[x+X-1, y+Y-1] = 0
@@ -693,6 +743,7 @@ def Fill_marsh (DEM, Peaks, Nodata_value, opt):
     for Iteration in np.arange(0,10,1):
         Counter = 100
         while Counter > 2:
+            print Counter
             Counter = Counter-1
             Search_marsh = np.where (Marsh == Counter+1)
             Non_filled = 0
