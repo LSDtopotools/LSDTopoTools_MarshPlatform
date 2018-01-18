@@ -68,10 +68,10 @@ def MarshID(Input_dir =  "/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data/
 
         # NB: When loading input data, please make sure the naming convention shown here is respected.
         print(" Loading DEM")
-        DEM, post_DEM, envidata_DEM =  ENVI_raster_binary_to_2d_array (Input_dir+"%s.bil" % (site), site)
+        DEM, post_DEM, envidata_DEM =  ENVI_raster_binary_to_2d_array (Input_dir+"%s_DEM_clip.bil" % (site), site)
         print " Loading Slopes"
         # check to get the correct slope raster
-        slope_fname = site+"_slope.bil"
+        slope_fname = site+"_slope_clip.bil"
         if not os.path.isfile(Input_dir+slope_fname):
             slope_fname = site+"_SLOPE.bil"
         Slope, post_Slope, envidata_Slope =  ENVI_raster_binary_to_2d_array (Input_dir+slope_fname, site)

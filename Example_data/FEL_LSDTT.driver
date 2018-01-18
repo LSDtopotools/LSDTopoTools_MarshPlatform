@@ -5,8 +5,8 @@
 
 # These are parameters for the file i/o
 # IMPORTANT: You MUST make the write directory: the code will not work if it doesn't exist. 
-read path: /home/fionaclubb/GitHub/LSDTopoTools_MarshPlatform/Example_data
-write path: /home/fionaclubb/GitHub/LSDTopoTools_MarshPlatform/Example_data
+read path: /home/s1563094/Datastore/Software/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data
+write path: /home/s1563094/Datastore/Software/LSDTopoTools/LSDTopoTools_MarshPlatform/Example_data
 read fname: FEL_DEM_clip
 write fname: FEL_DEM_clip
 channel heads fname: NULL
