@@ -1,3 +1,9 @@
+"""
+    This package processes topographic data in order to extract marsh platforms
+    Guillaume C.H. Goodwin
+    Released unedr GPL3
+"""
+
 # Load useful Python packages
 import os
 import sys

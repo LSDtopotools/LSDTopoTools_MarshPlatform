@@ -5,7 +5,7 @@ This is your driver file to run the marsh platform extraction.
 
 Please read the README and the instructions in this script before you run it.
 
-Authors: Guillaume GH Goodwin and Simon Marius Mudd
+Authors: Guillaume CH Goodwin and Simon Marius Mudd
 
 """
 
